@@ -1,2 +1,2 @@
-# lymph-node-metastasis
-Detection of Metastasis of Lung Cancer to Lymph Nodes using Deep Learning
+# Classifying Lymph Node Metastasis of Lung Cancer from CT Images
+Let's roll it baby.
