@@ -4,13 +4,12 @@ from datetime import datetime
 import numpy as np
 from tensorflow.keras.utils import Sequence
 
-import config
 from data_generator.helper import dicom
 
 
 class DataGenerator(Sequence):
     'Generates data for Keras'
-    def __init__(self, list_IDs, gen_type, name_list_path, batch_size, segment=0., is_whole=True, 
+    def __init__(self, list_IDs, gen_type, name_list_path, data_path, log_path, batch_size, segment=0., is_whole=True, 
                  size = 100, n_channels=1, shuffle=True):
         'Initialization'
         self.dim = (size,size,size)
@@ -23,6 +22,8 @@ class DataGenerator(Sequence):
         self.is_whole = is_whole
         self.gen_type = gen_type
         self.name_list_path = name_list_path
+        self.data_path = data_path
+        self.log_path = log_path
         self.time = datetime.now().strftime("%m-%d-%Y %H-%M-%S")
        
    
@@ -63,12 +64,12 @@ class DataGenerator(Sequence):
           try:
             if i % 2:
               y[i] = np.array([0,1])
-              X[i,], _ = dicom.read_patient(ID, self.size, self.segment, self.is_whole)
+              X[i,], _ = dicom.read_patient(ID, self.size, self.segment, self.is_whole, self.data_path)
             else:
               y[i] = np.array([1,0])
               X[i,] = np.random.randn(self.size, self.size, self.size, 1)
           except Exception as e:
-              file_name = config.LOG_PATH + f"/log_{self.time}.txt"
+              file_name = self.log_path + f"/log_{self.time}.txt"
               with open(file_name, 'a+') as f:
                   f.write(ID + "\n\n\n")
                   f.write(str(e))

@@ -5,12 +5,11 @@ import numpy as np
 import pydicom
 from pydicom.pixel_data_handlers.util import apply_modality_lut
 
-import config
 from data_generator.helper import image
 
 
-def read_patient(name, size, segment, is_whole):
-    nifti_path = config.DATA_PATH + name + "/*.nii.gz"
+def read_patient(name, size, segment, is_whole, data_path):
+    nifti_path = data_path + name + "/*.nii.gz"
     nifti_file = glob.glob(nifti_path)
     img = nib.load(nifti_file[0])
     data = img.get_fdata().transpose()
@@ -19,14 +18,14 @@ def read_patient(name, size, segment, is_whole):
         data[data != float(segment)] = 0.
     
     mid = image.find_mid(data)
-    dcm = _read_dicom(name, size, mid)
+    dcm = _read_dicom(name, size, mid, data_path)
     data = image.cut(data, mid, size)
 
     return dcm, data
 
 
-def _read_dicom(name, size, mid):
-    path = config.DATA_PATH + name + "/*.dcm"
+def _read_dicom(name, size, mid, data_path):
+    path = data_path + name + "/*.dcm"
     dcm_files = glob.glob(path)
     pixel_data = []
     data = []
